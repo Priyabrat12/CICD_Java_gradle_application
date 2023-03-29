@@ -2,6 +2,7 @@ pipeline{
     agent any 
     environment{
         VERSION = "${env.BUILD_ID}"
+// set up of every build no. as a new tag of docker image creates inside the variable - env.BUILD_ID 
     }
     stages{
         stage("sonar quality check"){
@@ -26,5 +27,25 @@ pipeline{
                 }  
             }
         }
+        stage("docker build & docker push"){
+            steps{
+                script{
+                    withCredentials([string(credentialsId: 'docker-pass', variable: 'docker-password')]) {
+                             sh '''
+                                docker build -t 54.91.157.218:8083/springapp:${VERSION} .                       
+                                docker login -u admin -p $docker-password 54.91.157.218:8083 
+                                docker push  54.91.157.218:8083/springapp:${VERSION}
+                                docker rmi 54.91.157.218:8083/springapp:${VERSION}
+                            '''
+                    }
+                }
+            }
+        }
     }
 }
+// withCredentials([string(credentialsId: 'docker-pass', variable: 'docker-password')]) - the password of docker hosted reop is encrypted
+// 54.91.157.218:8083/springapp:${VERSION}      54.91.157.218:8083/springapp - image name, ${VERSION} - tag (here build number is tag)
+// docker build -t 54.91.157.218:8083/springapp:${VERSION} .     - build the image            
+// docker login -u admin -p $docker-password 54.91.157.218:8083  - login into the docker hosted repo in nexus
+// docker push  54.91.157.218:8083/springapp:${VERSION}          - push the image to the repo
+// docker rmi 54.91.157.218:8083/springapp:${VERSION}            - deleting the image from jenkins to clean up space
