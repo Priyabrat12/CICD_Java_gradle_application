@@ -42,6 +42,11 @@ pipeline{
             }
         }
     }
+    post {
+		always {
+			mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "deekshith.snsep@gmail.com";  
+		}
+	}
 }
 // withCredentials([string(credentialsId: 'docker_pass', variable: 'docker_password')]) - the password of docker hosted reop is encrypted
 // 54.91.157.218:8083/springapp:${VERSION}      54.91.157.218:8083/springapp - image name, ${VERSION} - tag (here build number is tag)
