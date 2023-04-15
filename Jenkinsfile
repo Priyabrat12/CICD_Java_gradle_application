@@ -32,10 +32,10 @@ pipeline{
                 script{
                     withCredentials([string(credentialsId: 'docker_pass', variable: 'docker_password')]) {
                              sh '''
-                                docker build -t 34.228.41.252:8083/springapp:${VERSION} .
-                                docker login -u admin -p $docker_password 34.228.41.252:8083 
-                                docker push  34.228.41.252:8083/springapp:${VERSION}
-                                docker rmi 34.228.41.252:8083/springapp:${VERSION}
+                                docker build -t 50.16.170.178:8083/springapp:${VERSION} .
+                                docker login -u admin -p $docker_password 50.16.170.178:8083 
+                                docker push  50.16.170.178:8083/springapp:${VERSION}
+                                docker rmi 50.16.170.178:8083/springapp:${VERSION}
                             '''
                     }
                 }
@@ -47,7 +47,7 @@ pipeline{
 
                     dir('kubernetes/') {
                          withEnv(['DATREE_TOKEN=46928342-3820-46bd-a262-7bbf1aae5cc3']) {
-                              sh 'helm datree test /root/.jenkins/workspace/Java_gradle_application/kubernetes/myapp/'
+                              sh 'helm datree test myapp/'
                          }
                     }
                 }
